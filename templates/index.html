@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Slayer AI - Mutation-Guided AI Test Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Bug Slayer AI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#github-repo">GitHub Repo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#custom-code">Custom Code</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#results">Results</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Add a loading overlay -->
+    <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-50" style="display: none; z-index: 9999;">
+        <div class="card p-4 text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 id="loadingMessage">Running tests...</h5>
+            <p class="text-muted">This may take a few seconds</p>
+            <button id="cancelOperation" class="btn btn-sm btn-outline-danger mt-2">Cancel</button>
+        </div>
+    </div>
+
+    <header class="bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4">Bug Slayer AI</h1>
+            <p class="lead">Mutation-Guided AI Test Generator</p>
+            <button id="run-tests" class="btn btn-light btn-lg mt-3">Run Test Generation</button>
+        </div>
+    </header>
+
+    <section id="about" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="text-center mb-4">About the Project</h2>
+                    <p>Bug Slayer AI automatically finds hidden bugs in your code before they cause real problems. Instead of writing test cases manually, AI generates them for you based on real-world vulnerabilities.</p>
+                    <p>Our system uses Mutation Testing to intentionally introduce bugs ("mutants") into your code and then checks if the AI-generated tests can detect them:</p>
+                    <ul>
+                        <li>If the test fails → Good! It caught the bug.</li>
+                        <li>If the test passes → Bad! The bug went undetected.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="github-repo" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <h2 class="text-center mb-4">GitHub Repository Integration</h2>
+                    <p class="text-center">Analyze a function from a GitHub repository</p>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>GitHub Repository Input</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="githubTestForm">
+                                <div class="mb-3">
+                                    <label for="repoUrl" class="form-label">GitHub Repository URL</label>
+                                    <input type="text" class="form-control" id="repoUrl" placeholder="https://github.com/username/repository">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="filePath" class="form-label">File Path (relative to repository root)</label>
+                                    <input type="text" class="form-control" id="filePath" placeholder="path/to/file.py">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="githubFunctionName" class="form-label">Function Name</label>
+                                    <input type="text" class="form-control" id="githubFunctionName" placeholder="function_name">
+                                </div>
+                                <div class="alert alert-info mb-3" role="alert">
+                                    <strong>Note:</strong> Test results will be displayed below and also in the main "Testing Results" section.
+                                </div>
+                                <button type="submit" class="btn btn-primary">Test GitHub Function</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card" id="githubResultsContainer" style="display: none;">
+                        <div class="card-header">
+                            <h5>GitHub Function Testing Results</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Mutation Type</th>
+                                            <th>Mutated Code</th>
+                                            <th>Test Code</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="githubMutationsTable">
+                                        <!-- GitHub mutations will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="custom-code" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <h2 class="text-center mb-4">Custom Code Input</h2>
+                    <p class="text-center">Paste your own code to test with mutation testing</p>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Input Function to Test</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="customTestForm">
+                                <div class="mb-3">
+                                    <label for="functionName" class="form-label">Function Name</label>
+                                    <input type="text" class="form-control" id="functionName" placeholder="calculator" value="calculator">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="codeInput" class="form-label">Python Function Code</label>
+                                    <textarea class="form-control" id="codeInput" rows="10" placeholder="def function_name(params):\n    # Your code here">def calculator(operation, a, b):
+    """
+    Performs basic arithmetic operations
+    operation: 'add', 'subtract', 'multiply', 'divide'
+    a, b: numbers
+    """
+    if operation == 'add':
+        return a + b
+    elif operation == 'subtract':
+        return a - b
+    elif operation == 'multiply':
+        return a * b
+    elif operation == 'divide':
+        if b != 0:  # Prevent division by zero
+            return a / b
+        else:
+            raise ValueError("Cannot divide by zero")
+    else:
+        raise ValueError(f"Unknown operation: {operation}")</textarea>
+                                </div>
+                                <div class="alert alert-info mb-3" role="alert">
+                                    <strong>Note:</strong> Test results will be displayed below and also in the main "Testing Results" section.
+                                </div>
+                                <button type="submit" class="btn btn-primary">Test Custom Code</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card" id="customResultsContainer" style="display: none;">
+                        <div class="card-header">
+                            <h5>Generated Mutations & Tests</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Mutation Type</th>
+                                            <th>Mutated Code</th>
+                                            <th>Test Code</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customMutationsTable">
+                                        <!-- Custom mutations will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="results" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Testing Results</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Mutants</h5>
+                            <p id="total-mutants" class="display-4">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center mb-3 bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Killed Mutants</h5>
+                            <p id="killed-mutants" class="display-4">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center mb-3 bg-danger text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Surviving Mutants</h5>
+                            <p id="surviving-mutants" class="display-4">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center mb-3 bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Effectiveness</h5>
+                            <p id="test-effectiveness" class="display-4">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Mutation Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Mutation Type</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mutations-table">
+                                        <!-- Mutations will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Test Code Modal -->
+            <div class="modal fade" id="testCodeModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">AI-Generated Test Code</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <pre><code id="test-code-display" class="language-python"></code></pre>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <div class="container">
+            <p class="mb-0">Bug Slayer AI - Hackathon Project 2023</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-python.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
