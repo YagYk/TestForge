@@ -35,3 +35,72 @@ temp_*.py
 .vscode/
 *.swp
 *.swo 
+# Python virtual environment
+venv/
+env/
+.env/
+.venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js / React
+node_modules/
+/Frontend/node_modules/
+/Frontend/build/
+/Frontend/coverage/
+/Frontend/.env
+/Frontend/.env.local
+/Frontend/.env.development.local
+/Frontend/.env.test.local
+/Frontend/.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.classpath
+.settings/
+.history/
+
+# TestForge specific
+/TEMP_DIR/
+/tmp/
+api_diagnostic.json
+*.session
+/sessions/
+*.log
+server_pid.txt
+
+# Spline fix artifacts  
+Frontend/fix_chunk_error.js
+Frontend/fix_spline_errors.bat
+Frontend/apply_spline_fix.bat
+Frontend/update_and_run.bat
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Testing
+.coverage
+coverage/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover

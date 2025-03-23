@@ -1,93 +1,213 @@
-# Bug Slayer AI: Mutation-Guided AI Test Generator
+# TestForge - Mutation-Guided AI Test Generator
 
-An AI-powered tool that automatically finds hidden bugs in your code by generating smart test cases based on mutation testing.
+TestForge is a comprehensive testing platform that leverages mutation testing and AI to help developers create more robust test suites. It automatically generates mutations in your code and uses AI to create tests that can detect these mutations.
 
-## Project Overview
+## Features
 
-Bug Slayer AI uses mutation testing principles combined with AI to automatically generate test cases that can catch potential bugs in your code:
+- **Mutation Testing**: Automatically generates mutations in your code to simulate bugs
+- **AI-Powered Test Generation**: Uses Google Gemini API to create intelligent tests that can detect mutations
+- **GitHub Integration**: Test code directly from GitHub repositories
+- **Intuitive UI**: Modern web interface for visualizing test results and mutation coverage
+- **Session Management**: Save and retrieve test results with unique session IDs
 
-1. **Mutation Testing**: We intentionally introduce bugs (mutations) into your code
-2. **AI Test Generation**: AI automatically creates test cases to catch these mutations
-3. **Results Dashboard**: See which mutants were "killed" vs "survived"
+## Project Structure
 
-## Demo Features
-
-- Simple calculator function with mutated versions
-- AI-generated test cases to catch the mutations
-- Interactive web dashboard showing test results
-
-## Quick Start
-
-### Setup
-
-1. Clone this repository
 ```
-git clone <repository-url>
-cd bug-slayer-ai
-```
-
-2. Set up a virtual environment
-```
-# On Windows
-python -m venv myenv
-myenv\Scripts\activate
-
-# On macOS/Linux
-python3 -m venv myenv
-source myenv/bin/activate
+TestForge/
+├── Frontend/              # React frontend application
+│   ├── src/               # Source code
+│   ├── public/            # Public assets
+│   └── build/             # Production build
+├── app.py                 # Flask backend application
+├── mutation_engine.py     # Mutation generation engine
+├── test_generator.py      # AI test generation using Gemini API
+├── test_executor.py       # Test execution and result collection
+├── debug_api.py           # API debugging tool
+├── server_manager.py      # Server management script
+├── apply_spline_fix.bat   # Script to fix common issues (Windows)
+├── requirements.txt       # Python dependencies
+└── .env                   # Environment variables
 ```
 
-3. Install dependencies
-```
-pip install -r requirements.txt
-```
+## Setup and Installation
 
-4. Set up your OpenAI API key (optional for demo)
-```
-# On Windows
-set OPENAI_API_KEY=your-api-key
+### Prerequisites
 
-# On macOS/Linux
-export OPENAI_API_KEY=your-api-key
-```
+- Python 3.8+
+- Node.js 16+
+- Google Gemini API key
 
-### Running the Application
+### Quick Start (Windows)
 
-1. Start the Flask server
-```
-python app.py
+For Windows users, we provide a quick start script that handles both the backend and frontend setup:
+
+```bash
+# Just double-click on this file
+apply_spline_fix.bat
 ```
 
-2. Open your browser and go to http://127.0.0.1:5000
+This script:
+1. Installs required dependencies
+2. Fixes common issues with 3D components
+3. Starts both the backend and frontend servers
 
-3. Click "Run Test Generation" to see the AI in action!
+### Backend Setup
 
-## How It Works
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/TestForge.git
+   cd TestForge
+   ```
 
-1. We have a simple calculator function in `bugslayer.py`
-2. When you click "Run Test Generation":
-   - We create mutated versions of the code (e.g., change + to -)
-   - AI generates test cases to try to catch these mutations
-   - Results show which mutations were caught vs. missed
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-## Future Development
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-This is an MVP (Minimum Viable Product) for demonstration purposes. Future enhancements could include:
+4. Create a `.env` file with your Gemini API key:
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
 
-- Integration with real codebases
-- Support for multiple programming languages
-- More sophisticated mutation strategies
-- Advanced AI prompt engineering
-- CI/CD integration
+5. Run the backend server:
+   ```bash
+   python app.py
+   ```
 
-## Tech Stack
+Alternatively, use the server manager to start the backend:
+```bash
+python server_manager.py start
+```
 
-- Python
-- Flask
-- OpenAI API
-- Bootstrap
-- JavaScript
+### Frontend Setup
 
-## Contributing
+1. Navigate to the Frontend directory:
+   ```bash
+   cd Frontend
+   ```
 
-This is a hackathon project. Feel free to fork and extend!
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm start
+   ```
+
+4. For production, build the frontend:
+   ```bash
+   npm run build
+   ```
+
+## Using the Application
+
+1. **Home Page**: Visit the home page to access the testing form.
+2. **Custom Code Testing**: Enter your Python code and optionally provide custom tests.
+3. **GitHub Repository Testing**: Provide a GitHub repository URL and optionally specify a target file.
+4. **Test Results**: View detailed results including mutation detection rates, test coverage, and mutation details.
+
+## API Documentation
+
+The backend provides the following API endpoints:
+
+- `GET /api/health`: Check API health and dependencies
+- `POST /api/test-custom`: Test custom Python code
+- `POST /api/test-github`: Test code from a GitHub repository
+- `GET /api/run-tests`: Run a demo test
+- `GET /api/results/<session_id>`: Retrieve results for a specific session
+
+## Troubleshooting
+
+### Automated Fixes
+
+We provide several scripts to automatically fix common issues:
+
+1. **Server Management**:
+   ```bash
+   # Start both backend and frontend
+   python server_manager.py all
+   
+   # Check server status
+   python server_manager.py check
+   
+   # Restart just the backend
+   python server_manager.py restart
+   ```
+
+2. **3D Component/Chunk Loading Errors**:
+   ```bash
+   # For Windows users
+   Frontend/fix_spline_errors.bat
+   
+   # For all platforms
+   cd Frontend
+   node fix_chunk_error.js
+   ```
+
+### Backend Issues
+
+1. **API Connection Errors**:
+   - Ensure the Flask server is running
+   - Check for CORS issues in the browser console
+   - Run `python debug_api.py` to test API functionality
+   - Try using the improved API service that tries multiple endpoints
+
+2. **Gemini API Issues**:
+   - Verify your API key is correct in the `.env` file
+   - Check internet connectivity
+   - If issues persist, the system will fall back to basic test templates
+
+3. **Mutation Testing Failures**:
+   - Ensure your Python code is syntactically correct
+   - Check for library dependencies required by your code
+
+### Frontend Issues
+
+1. **Chunk Loading Errors / 3D Component Issues**:
+   - Use our automatic fix scripts (see above)
+   - If errors persist, you can disable the 3D components by creating a `.env` file in the Frontend directory with:
+     ```
+     REACT_APP_DISABLE_SPLINE=true
+     ```
+
+2. **Build Errors**:
+   - Ensure all dependencies are installed with `npm install`
+   - Check for JavaScript errors in the browser console
+   - Try clearing browser cache and reloading
+   - Use the config-overrides.js file to customize webpack configuration
+
+3. **API Connection**:
+   - Check the API status indicator in the UI
+   - Verify the API URL configuration in `config.js`
+   - Try the retry button in the Test Form component
+   - Increase request timeout if needed
+
+## Development and Extension
+
+To extend TestForge with new features:
+
+1. **Custom Mutation Operators**: Add new mutation operators in `mutation_engine.py`
+2. **Test Generation Strategies**: Enhance test templates in `test_generator.py`
+3. **Frontend Components**: Add or modify React components in the Frontend directory
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contributors
+
+- Your Name (@yourgithub)
+
+## Acknowledgements
+
+- Google Gemini API for AI-powered test generation
+- React and Material-UI for the frontend interface
+- Flask for the backend API
