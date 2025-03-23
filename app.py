@@ -8,6 +8,15 @@ import logging
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import sys
+import flask
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get API key
+api_key = os.getenv("GEMINI_API_KEY")
+print(f"Loaded Gemini API key: {'Available' if api_key else 'Missing'}")
 
 # Import your components
 from mutation_engine import MutationEngine
@@ -23,7 +32,8 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__, static_folder='Frontend/build')
 
 # Configure CORS for your frontend
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3004", "methods": ["GET", "POST", "OPTIONS"]}})
+# CORS(app, resources={r"/api/*": {"origins": "http://localhost:3004", "methods": ["GET", "POST", "OPTIONS"]}})
+CORS(app, resources={r"/api/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"]}})
 
 # Dictionary to store sessions and their results
 sessions = {}
@@ -75,7 +85,7 @@ def health_check():
             "gemini_api_key": "available" if has_gemini_key else "missing"
         },
         "server_info": {
-            "flask_version": Flask.__version__,
+            "flask_version": flask.__version__,
             "python_version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
             "time": time.strftime("%Y-%m-%d %H:%M:%S"),
             "client_ip": request.remote_addr
@@ -90,6 +100,7 @@ def test_custom():
     """
     Run mutation testing on custom Python code.
     Request JSON: {"code": "...", "custom_tests": "...", "generate_ai_tests": true}
+    Optional: {"mutations": [...]} to provide custom mutations
     """
     if request.method == 'OPTIONS':
         response = jsonify({})
@@ -110,20 +121,48 @@ def test_custom():
         code_path = os.path.join(session_dir, "source.py")
         with open(code_path, "w", encoding="utf-8") as f:
             f.write(data["code"])
+        
+        logger.info(f"Processing session {session_id} - Code length: {len(data['code'])}")
+        logger.info(f"Code path: {code_path}")
+        
+        # Check for custom mutations
+        custom_mutations = data.get("mutations", None)
+        if custom_mutations:
+            logger.info(f"Using {len(custom_mutations)} custom mutations provided in request")
+            mutations = custom_mutations
+        else:
+            # Normal flow - generate mutations with the engine
+            mutation_engine = MutationEngine(session_dir)
+            
+            # Create a direct debug test to see if the mutation engine works
+            logger.info("DEBUG: Direct test of the mutation engine:")
+            debug_mutations = mutation_engine._generate_mutations_custom(code_path)
+            logger.info(f"DEBUG: Direct mutation engine test generated {len(debug_mutations)} mutations")
+            if debug_mutations:
+                logger.info(f"DEBUG: First mutation: {debug_mutations[0].get('mutation_description', 'Unknown')}")
+            
+            mutations = mutation_engine.generate_mutations(code_path)
+            logger.info(f"Generated {len(mutations)} mutations for session {session_id}")
+            
+            # If no mutations were generated, use a fallback approach
+            if not mutations and debug_mutations:
+                logger.info("No mutations from generate_mutations but debug found some - using those")
+                mutations = debug_mutations
+            
+            # Log the first few mutations if any
+            if mutations:
+                for i, mutation in enumerate(mutations[:3]):
+                    logger.info(f"Mutation {i}: {mutation.get('mutation_description', 'Unknown')} - Line {mutation.get('line_number', 'Unknown')}")
 
-        mutation_engine = MutationEngine(session_dir)
         test_generator = TestGenerator(os.getenv("GEMINI_API_KEY"))
         test_executor = TestExecutor(session_dir)
-
-        mutations = mutation_engine.generate_mutations(code_path)
-        logger.info(f"Generated {len(mutations)} mutations for session {session_id}")
 
         tests = []
         if "custom_tests" in data and data["custom_tests"]:
             tests.append({"name": "Custom Test", "code": data["custom_tests"], "source": "custom"})
 
         generate_ai_tests = data.get("generate_ai_tests", True)
-        if generate_ai_tests:
+        if generate_ai_tests and mutations:
             for idx, mutation in enumerate(mutations):
                 test_code = test_generator.generate_test(
                     data["code"],

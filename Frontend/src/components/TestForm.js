@@ -55,6 +55,7 @@ const TestForm = () => {
   const [renderCount, setRenderCount] = useState(0);
   const [debugMode, setDebugMode] = useState(false);
   const [chunkLoadingError, setChunkLoadingError] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   
   const { loading, error, checkHealth, testCustomCode, testGithubRepo, apiDebugInfo } = useApi();
   
@@ -579,17 +580,17 @@ class TestAdd(unittest.TestCase):
           <button 
             type="submit" 
             className="submit-button" 
-            disabled={loading}
+            disabled={isLoading}
             style={{
-              background: loading ? '#333' : 'linear-gradient(135deg, #00ffcc 0%, #3a86ff 100%)',
+              background: isLoading ? '#333' : 'linear-gradient(135deg, #00ffcc 0%, #3a86ff 100%)',
               color: 'black',
               padding: '10px 20px',
               border: 'none',
               borderRadius: '5px',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: isLoading ? 'not-allowed' : 'pointer'
             }}
           >
-            {loading ? 'Testing...' : 'Run Tests'}
+            {isLoading ? 'Testing...' : 'Run Tests'}
           </button>
         </form>
       ) : (
@@ -651,17 +652,17 @@ class TestAdd(unittest.TestCase):
           <button 
             type="submit" 
             className="submit-button" 
-            disabled={loading}
+            disabled={isLoading}
             style={{
-              background: loading ? '#333' : 'linear-gradient(135deg, #00ffcc 0%, #3a86ff 100%)',
+              background: isLoading ? '#333' : 'linear-gradient(135deg, #00ffcc 0%, #3a86ff 100%)',
               color: 'black',
               padding: '10px 20px',
               border: 'none',
               borderRadius: '5px',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: isLoading ? 'not-allowed' : 'pointer'
             }}
           >
-            {loading ? 'Testing...' : 'Run Tests'}
+            {isLoading ? 'Testing...' : 'Run Tests'}
           </button>
         </form>
       )}

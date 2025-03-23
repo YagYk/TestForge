@@ -1,0 +1,181 @@
+{
+  "mutation_detection_rate": 0.0,
+  "mutation_results": [
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "\"\"\"Calculate discount based on price, customer type or membership years.\"\"\"",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 0,
+      "original_code": "\"\"\"Calculate discount based on price, customer type and membership years.\"\"\"",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "if customer_type != \"premium\":",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 1,
+      "original_code": "if customer_type == \"premium\":",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "elif customer_type != \"gold\":",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 2,
+      "original_code": "elif customer_type == \"gold\":",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "elif customer_type != \"silver\":",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 3,
+      "original_code": "elif customer_type == \"silver\":",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "loyalty_bonus = min(years_of_membership / 0.01, 0.1)",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 4,
+      "original_code": "loyalty_bonus = min(years_of_membership * 0.01, 0.1)",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "total_discount = base_discount - loyalty_bonus",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 5,
+      "original_code": "total_discount = base_discount + loyalty_bonus",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "if price <= 1000:",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 6,
+      "original_code": "if price > 1000:",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "total_discount -= 0.05",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 7,
+      "original_code": "total_discount += 0.05",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "final_price = price * (1 + total_discount)",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 8,
+      "original_code": "final_price = price * (1 - total_discount)",
+      "was_detected": false
+    },
+    {
+      "detected_by_tests": [],
+      "line_number": 0,
+      "mutated_code": "final_price = price / (1 - total_discount)",
+      "mutation_description": "Unknown mutation",
+      "mutation_id": 9,
+      "original_code": "final_price = price * (1 - total_discount)",
+      "was_detected": false
+    }
+  ],
+  "original_code": "\ndef calculate_discount(price, customer_type, years_of_membership):\n    \"\"\"Calculate discount based on price, customer type and membership years.\"\"\"\n    base_discount = 0.0\n    \n    if customer_type == \"premium\":\n        base_discount = 0.15\n    elif customer_type == \"gold\":\n        base_discount = 0.10\n    elif customer_type == \"silver\":\n        base_discount = 0.05\n    \n    loyalty_bonus = min(years_of_membership * 0.01, 0.1)\n    total_discount = base_discount + loyalty_bonus\n    \n    if price > 1000:\n        total_discount += 0.05\n        \n    final_price = price * (1 - total_discount)\n    return round(final_price, 2)\n",
+  "session_id": "a29c6359-667c-4e8f-892d-c4a5bf6cff22",
+  "test_details": [
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Custom Test",
+      "passes_original": false,
+      "test_id": 0
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 0",
+      "passes_original": false,
+      "test_id": 1
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 1",
+      "passes_original": false,
+      "test_id": 2
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 2",
+      "passes_original": false,
+      "test_id": 3
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 3",
+      "passes_original": false,
+      "test_id": 4
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 4",
+      "passes_original": false,
+      "test_id": 5
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 5",
+      "passes_original": false,
+      "test_id": 6
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 6",
+      "passes_original": false,
+      "test_id": 7
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 7",
+      "passes_original": false,
+      "test_id": 8
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 8",
+      "passes_original": false,
+      "test_id": 9
+    },
+    {
+      "detected_mutations": [],
+      "detection_count": 0,
+      "name": "Generated Test 9",
+      "passes_original": false,
+      "test_id": 10
+    }
+  ],
+  "tests_detected_mutations": 0,
+  "tests_passed_original": 0,
+  "timestamp": 1742716948.526518,
+  "total_mutations": 10,
+  "total_tests": 11
+}
